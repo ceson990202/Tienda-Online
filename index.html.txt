@@ -1,0 +1,2859 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PokéTienda Online</title>
+    <style>
+        /* ===== RESET ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            background-attachment: fixed;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* ===== FONDO POKEMON ===== */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" opacity="0.08"><circle cx="20" cy="20" r="8" fill="%23FFCB05"/><circle cx="80" cy="80" r="12" fill="%23FFCB05"/><circle cx="50" cy="90" r="6" fill="%23FFCB05"/><circle cx="90" cy="30" r="5" fill="%23FFCB05"/><circle cx="10" cy="70" r="7" fill="%23FFCB05"/><circle cx="70" cy="10" r="9" fill="%23FFCB05"/><circle cx="30" cy="50" r="4" fill="%23FFCB05"/><circle cx="60" cy="60" r="6" fill="%23FFCB05"/><circle cx="40" cy="80" r="3" fill="%23FFCB05"/><circle cx="85" cy="50" r="4" fill="%23FFCB05"/><path d="M15 15 L25 5 L35 15 L25 25 Z" fill="%23FF6B6B" opacity="0.5"/><path d="M70 70 L80 60 L90 70 L80 80 Z" fill="%23FF6B6B" opacity="0.5"/></svg>');
+            background-size: 300px 300px;
+            background-repeat: repeat;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ===== HEADER ===== */
+        .amazon-header {
+            background: rgba(26, 26, 46, 0.95);
+            padding: 10px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            backdrop-filter: blur(10px);
+            border-bottom: 3px solid #FFCB05;
+        }
+
+        .header-container {
+            max-width: 1500px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: white;
+            font-size: 1.8em;
+            font-weight: bold;
+            padding: 5px 15px;
+            border-radius: 50px;
+            border: 2px solid transparent;
+            transition: all 0.3s;
+            cursor: pointer;
+            background: rgba(255, 203, 5, 0.1);
+        }
+
+        .logo:hover {
+            border-color: #FFCB05;
+            background: rgba(255, 203, 5, 0.2);
+            transform: scale(1.05);
+        }
+
+        .logo-icon {
+            font-size: 1.5em;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        .logo-text {
+            background: linear-gradient(135deg, #FFCB05, #FF6B6B);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 900;
+            text-shadow: none;
+        }
+
+        .logo-sub {
+            font-size: 0.35em;
+            color: #FFCB05;
+            -webkit-text-fill-color: #FFCB05;
+            display: block;
+            margin-top: -5px;
+            font-weight: normal;
+        }
+
+        .search-bar {
+            flex: 1;
+            display: flex;
+            min-width: 200px;
+            background: white;
+            border-radius: 50px;
+            overflow: hidden;
+            border: 2px solid #FFCB05;
+            transition: all 0.3s;
+        }
+
+        .search-bar:focus-within {
+            border-color: #FF6B6B;
+            box-shadow: 0 0 20px rgba(255, 203, 5, 0.3);
+            transform: scale(1.02);
+        }
+
+        .search-bar input {
+            flex: 1;
+            padding: 12px 20px;
+            border: none;
+            outline: none;
+            font-size: 1em;
+            background: transparent;
+        }
+
+        .search-bar button {
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #FFCB05, #FF6B6B);
+            border: none;
+            color: #1a1a2e;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1em;
+        }
+
+        .search-bar button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(255, 203, 5, 0.4);
+        }
+
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .header-controls select {
+            padding: 10px 18px;
+            border-radius: 50px;
+            border: 2px solid #FFCB05;
+            background: rgba(26, 26, 46, 0.8);
+            color: white;
+            font-size: 0.9em;
+            cursor: pointer;
+            transition: all 0.3s;
+            backdrop-filter: blur(5px);
+        }
+
+        .header-controls select:hover {
+            border-color: #FF6B6B;
+            background: rgba(26, 26, 46, 0.9);
+            transform: scale(1.05);
+        }
+
+        .header-controls select option {
+            background: #1a1a2e;
+            color: white;
+        }
+
+        .admin-btn {
+            padding: 10px 25px;
+            background: linear-gradient(135deg, #FFCB05, #FF6B6B);
+            color: #1a1a2e;
+            border: none;
+            border-radius: 50px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9em;
+        }
+
+        .admin-btn:hover {
+            transform: scale(1.05) rotate(-2deg);
+            box-shadow: 0 4px 20px rgba(255, 203, 5, 0.4);
+        }
+
+        .admin-btn.active {
+            background: linear-gradient(135deg, #00b894, #00cec9);
+            color: white;
+        }
+
+        .admin-btn.active:hover {
+            box-shadow: 0 4px 20px rgba(0, 206, 201, 0.4);
+        }
+
+        /* ===== CONTENEDOR PRINCIPAL ===== */
+        .main-container {
+            max-width: 1500px;
+            margin: 20px auto;
+            padding: 0 20px;
+            flex: 1;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ===== PANEL ADMIN ===== */
+        .admin-panel {
+            display: none;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 25px;
+            padding: 30px;
+            box-shadow: 0 10px 50px rgba(0,0,0,0.3);
+            margin-bottom: 30px;
+            border: 2px solid #FFCB05;
+            backdrop-filter: blur(10px);
+        }
+
+        .admin-panel.active {
+            display: block;
+            animation: slideDown 0.5s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .admin-header h2 {
+            color: #1a1a2e;
+            font-size: 1.8em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .admin-header h2 .emoji {
+            font-size: 1.3em;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .admin-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .admin-actions button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 0.95em;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .admin-actions button:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+
+        .btn-add {
+            background: linear-gradient(135deg, #00b894, #00cec9);
+            color: white;
+        }
+
+        .btn-add:hover {
+            box-shadow: 0 8px 25px rgba(0, 206, 201, 0.4);
+        }
+
+        .btn-sync {
+            background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+            color: white;
+        }
+
+        .btn-sync:hover {
+            box-shadow: 0 8px 25px rgba(108, 92, 231, 0.4);
+        }
+
+        .btn-sync:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .btn-logout {
+            background: linear-gradient(135deg, #fd79a8, #e17055);
+            color: white;
+        }
+
+        .btn-logout:hover {
+            box-shadow: 0 8px 25px rgba(225, 112, 85, 0.4);
+        }
+
+        .btn-load {
+            background: linear-gradient(135deg, #fdcb6e, #f39c12);
+            color: #1a1a2e;
+        }
+
+        .btn-load:hover {
+            box-shadow: 0 8px 25px rgba(243, 156, 18, 0.4);
+        }
+
+        /* ===== CONFIGURACIÓN GITHUB ===== */
+        .github-config {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 2px solid #6c5ce7;
+            box-shadow: 0 4px 15px rgba(108, 92, 231, 0.15);
+        }
+
+        .github-config h3 {
+            color: #2d3436;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .github-config .subtitle {
+            color: #636e72;
+            margin-bottom: 20px;
+            font-size: 0.95em;
+        }
+
+        .github-config .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .github-config .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .github-config .form-group.full {
+            grid-column: 1 / -1;
+        }
+
+        .github-config label {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #2d3436;
+            font-size: 0.9em;
+        }
+
+        .github-config input {
+            padding: 12px 18px;
+            border: 2px solid #dfe6e9;
+            border-radius: 15px;
+            font-size: 1em;
+            transition: all 0.3s;
+            background: white;
+        }
+
+        .github-config input:focus {
+            outline: none;
+            border-color: #6c5ce7;
+            box-shadow: 0 0 0 4px rgba(108, 92, 231, 0.15);
+        }
+
+        .github-config input::placeholder {
+            color: #b2bec3;
+        }
+
+        .github-config .btn-group {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        .github-config .btn-group button {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 0.95em;
+            transition: all 0.3s;
+        }
+
+        .github-config .btn-group button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+
+        .btn-github-save {
+            background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+            color: white;
+        }
+
+        .btn-github-upload {
+            background: linear-gradient(135deg, #00b894, #00cec9);
+            color: white;
+        }
+
+        .btn-github-download {
+            background: linear-gradient(135deg, #fdcb6e, #f39c12);
+            color: #1a1a2e;
+        }
+
+        .github-status {
+            display: inline-block;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-weight: 600;
+            margin-top: 10px;
+            font-size: 0.9em;
+        }
+
+        .github-status.sync {
+            background: #00b894;
+            color: white;
+        }
+
+        .github-status.unsync {
+            background: #fd79a8;
+            color: white;
+        }
+
+        .github-status.loading {
+            background: #fdcb6e;
+            color: #1a1a2e;
+        }
+
+        .github-status.info {
+            background: #74b9ff;
+            color: white;
+        }
+
+        /* ===== WHATSAPP CONFIG ===== */
+        .whatsapp-config {
+            background: linear-gradient(135deg, #f0f7f0, #e8f5e9);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 2px solid #25D366;
+            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.15);
+        }
+
+        .whatsapp-config h3 {
+            color: #2d3436;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .whatsapp-config label {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #2d3436;
+            font-size: 0.9em;
+            display: block;
+        }
+
+        .whatsapp-config input {
+            width: 100%;
+            padding: 12px 18px;
+            border: 2px solid #dfe6e9;
+            border-radius: 15px;
+            font-size: 1em;
+            transition: all 0.3s;
+            background: white;
+            max-width: 400px;
+        }
+
+        .whatsapp-config input:focus {
+            outline: none;
+            border-color: #25D366;
+            box-shadow: 0 0 0 4px rgba(37, 211, 102, 0.15);
+        }
+
+        .whatsapp-config small {
+            display: block;
+            color: #636e72;
+            margin-top: 5px;
+            font-size: 0.85em;
+        }
+
+        /* ===== TABLA ADMIN ===== */
+        .admin-table-wrapper {
+            overflow-x: auto;
+            border-radius: 15px;
+            border: 1px solid #dfe6e9;
+        }
+
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .admin-table th {
+            background: linear-gradient(135deg, #1a1a2e, #2d2d44);
+            padding: 15px;
+            text-align: left;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+
+        .admin-table td {
+            padding: 15px;
+            border-bottom: 1px solid #dfe6e9;
+            vertical-align: middle;
+        }
+
+        .admin-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .admin-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .product-thumb {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 12px;
+            border: 2px solid #dfe6e9;
+        }
+
+        .btn-edit {
+            background: linear-gradient(135deg, #74b9ff, #0984e3);
+            color: white;
+            padding: 6px 18px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85em;
+            transition: all 0.3s;
+            margin-right: 5px;
+        }
+
+        .btn-edit:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(9, 132, 227, 0.3);
+        }
+
+        .btn-delete {
+            background: linear-gradient(135deg, #fd79a8, #e17055);
+            color: white;
+            padding: 6px 18px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85em;
+            transition: all 0.3s;
+        }
+
+        .btn-delete:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(225, 112, 85, 0.3);
+        }
+
+        .btn-toggle {
+            padding: 6px 18px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85em;
+            transition: all 0.3s;
+        }
+
+        .btn-toggle.visible {
+            background: linear-gradient(135deg, #00b894, #00cec9);
+            color: white;
+        }
+
+        .btn-toggle.visible:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(0, 206, 201, 0.3);
+        }
+
+        .btn-toggle.hidden {
+            background: linear-gradient(135deg, #fd79a8, #e17055);
+            color: white;
+        }
+
+        .btn-toggle.hidden:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(225, 112, 85, 0.3);
+        }
+
+        .table-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+            color: #636e72;
+            font-size: 0.9em;
+        }
+
+        /* ===== PRODUCTOS ===== */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+        }
+
+        .product-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            transition: all 0.4s ease;
+            display: flex;
+            flex-direction: column;
+            border: 2px solid rgba(255, 203, 5, 0.3);
+            backdrop-filter: blur(10px);
+            position: relative;
+        }
+
+        .product-card:hover {
+            transform: translateY(-8px) scale(1.01);
+            box-shadow: 0 15px 50px rgba(0,0,0,0.25);
+            border-color: #FFCB05;
+        }
+
+        .product-card.hidden-product::after {
+            content: "⚠️ OCULTO";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-15deg);
+            background: rgba(225, 112, 85, 0.9);
+            color: white;
+            padding: 10px 25px;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1.2em;
+            z-index: 10;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: translate(-50%, -50%) rotate(-15deg) scale(1); }
+            50% { transform: translate(-50%, -50%) rotate(-15deg) scale(1.05); }
+        }
+
+        .product-card.hidden-product {
+            opacity: 0.6;
+            filter: grayscale(0.5);
+        }
+
+        .product-image-container {
+            position: relative;
+            padding-top: 100%;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            overflow: hidden;
+        }
+
+        .product-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            padding: 15px;
+            transition: transform 0.5s ease;
+        }
+
+        .product-card:hover .product-image {
+            transform: scale(1.08);
+        }
+
+        /* POKEBALL DECORACIÓN */
+        .product-card::before {
+            content: "⚡";
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 1.5em;
+            z-index: 5;
+            opacity: 0.3;
+            animation: float 4s ease-in-out infinite;
+        }
+
+        .product-info {
+            padding: 20px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-title {
+            font-size: 1.05em;
+            color: #1a1a2e;
+            margin-bottom: 8px;
+            font-weight: 700;
+            line-height: 1.3;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            min-height: 44px;
+        }
+
+        .product-title:hover {
+            color: #FF6B6B;
+        }
+
+        .product-rating {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .stars {
+            color: #FFCB05;
+            font-size: 0.95em;
+            letter-spacing: 2px;
+        }
+
+        .reviews {
+            color: #636e72;
+            font-size: 0.85em;
+        }
+
+        .product-price-container {
+            display: flex;
+            align-items: baseline;
+            gap: 10px;
+            margin: 8px 0;
+            flex-wrap: wrap;
+        }
+
+        .product-price {
+            font-size: 1.6em;
+            font-weight: 800;
+            color: #1a1a2e;
+        }
+
+        .product-price .currency-symbol {
+            font-size: 0.7em;
+            font-weight: 400;
+            vertical-align: top;
+        }
+
+        .product-description {
+            color: #636e72;
+            font-size: 0.9em;
+            margin: 8px 0;
+            line-height: 1.5;
+            flex: 1;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .product-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 10px 0;
+            font-size: 0.85em;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+
+        .stock-status {
+            padding: 4px 14px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.85em;
+        }
+
+        .in-stock {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .low-stock {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .out-of-stock {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .guarantee-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            color: #00b894;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        .product-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .btn-whatsapp {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #25D366, #128C7E);
+            border: none;
+            border-radius: 50px;
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-whatsapp:hover {
+            transform: scale(1.03);
+            box-shadow: 0 8px 25px rgba(37, 211, 102, 0.4);
+        }
+
+        .btn-whatsapp:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .btn-whatsapp .whatsapp-icon {
+            font-size: 1.3em;
+        }
+
+        /* ===== MODALES ===== */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 3000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-box {
+            background: white;
+            border-radius: 25px;
+            max-width: 500px;
+            width: 90%;
+            padding: 35px;
+            position: relative;
+            max-height: 80vh;
+            overflow-y: auto;
+            animation: modalPop 0.4s ease;
+            border: 2px solid #FFCB05;
+        }
+
+        @keyframes modalPop {
+            from {
+                opacity: 0;
+                transform: scale(0.9) translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 1.8em;
+            cursor: pointer;
+            color: #636e72;
+            background: none;
+            border: none;
+            transition: all 0.3s;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-close:hover {
+            color: #e17055;
+            background: #f8f9fa;
+            transform: rotate(90deg);
+        }
+
+        .modal-box h2 {
+            color: #1a1a2e;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .modal-box .product-name {
+            color: #6c5ce7;
+            font-weight: 700;
+        }
+
+        .modal-box .guarantee-text {
+            background: linear-gradient(135deg, #f0f7f0, #e8f5e9);
+            padding: 20px;
+            border-radius: 15px;
+            margin: 15px 0;
+            border-left: 5px solid #00b894;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .modal-actions button {
+            flex: 1;
+            padding: 14px;
+            border: none;
+            border-radius: 50px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .modal-actions button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .modal-actions .btn-continue {
+            background: linear-gradient(135deg, #25D366, #128C7E);
+            color: white;
+        }
+
+        .modal-actions .btn-cancel {
+            background: #dfe6e9;
+            color: #2d3436;
+        }
+
+        /* ===== LOGIN ===== */
+        .login-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.85);
+            z-index: 4000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .login-overlay.active {
+            display: flex;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .login-box {
+            background: white;
+            padding: 45px;
+            border-radius: 25px;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            border: 2px solid #FFCB05;
+            animation: modalPop 0.4s ease;
+            text-align: center;
+        }
+
+        .login-box .login-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+            display: block;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .login-box h2 {
+            margin-bottom: 10px;
+            color: #1a1a2e;
+        }
+
+        .login-box p {
+            color: #636e72;
+            margin-bottom: 20px;
+            font-size: 0.95em;
+        }
+
+        .login-box input {
+            width: 100%;
+            padding: 14px 20px;
+            margin-bottom: 15px;
+            border: 2px solid #dfe6e9;
+            border-radius: 50px;
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+
+        .login-box input:focus {
+            outline: none;
+            border-color: #6c5ce7;
+            box-shadow: 0 0 0 4px rgba(108, 92, 231, 0.15);
+        }
+
+        .login-box button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #FFCB05, #FF6B6B);
+            color: #1a1a2e;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .login-box button:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 25px rgba(255, 203, 5, 0.3);
+        }
+
+        .login-error {
+            color: #e17055;
+            text-align: center;
+            margin-top: 10px;
+            display: none;
+            font-weight: 600;
+        }
+
+        /* ===== MODAL PRODUCTO ===== */
+        .product-modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 5000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .product-modal-overlay.active {
+            display: flex;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .product-modal-box {
+            background: white;
+            padding: 35px;
+            border-radius: 25px;
+            max-width: 550px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            border: 2px solid #FFCB05;
+            animation: modalPop 0.4s ease;
+        }
+
+        .product-modal-box h2 {
+            margin-bottom: 20px;
+            color: #1a1a2e;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .product-modal-box input,
+        .product-modal-box textarea,
+        .product-modal-box select {
+            width: 100%;
+            padding: 12px 18px;
+            margin-bottom: 15px;
+            border: 2px solid #dfe6e9;
+            border-radius: 15px;
+            font-size: 1em;
+            font-family: inherit;
+            transition: all 0.3s;
+        }
+
+        .product-modal-box input:focus,
+        .product-modal-box textarea:focus,
+        .product-modal-box select:focus {
+            outline: none;
+            border-color: #6c5ce7;
+            box-shadow: 0 0 0 4px rgba(108, 92, 231, 0.15);
+        }
+
+        .product-modal-box textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .product-modal-box .form-row {
+            display: flex;
+            gap: 12px;
+        }
+
+        .product-modal-box .form-row>* {
+            flex: 1;
+        }
+
+        .image-preview-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            border: 2px dashed #dfe6e9;
+        }
+
+        .image-preview {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 15px;
+            border: 2px solid #dfe6e9;
+            background: white;
+        }
+
+        .file-upload-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .file-upload-wrapper input[type="file"] {
+            padding: 10px;
+            border: 2px solid #dfe6e9;
+            border-radius: 15px;
+            cursor: pointer;
+            background: white;
+        }
+
+        .file-upload-wrapper input[type="file"]:hover {
+            border-color: #6c5ce7;
+        }
+
+        .file-upload-wrapper small {
+            color: #636e72;
+            font-size: 0.8em;
+        }
+
+        .product-modal-box .modal-actions {
+            margin-top: 15px;
+        }
+
+        .product-modal-box .modal-actions button {
+            flex: 1;
+            padding: 14px;
+            border: none;
+            border-radius: 50px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .product-modal-box .modal-actions button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 15px;
+            padding: 10px 15px;
+            background: #f8f9fa;
+            border-radius: 15px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            margin: 0;
+        }
+
+        .checkbox-group label {
+            font-weight: 600;
+            color: #2d3436;
+            cursor: pointer;
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            background: rgba(26, 26, 46, 0.95);
+            color: #dfe6e9;
+            padding: 40px 20px 20px;
+            margin-top: 40px;
+            border-top: 3px solid #FFCB05;
+            backdrop-filter: blur(10px);
+            position: relative;
+            z-index: 1;
+        }
+
+        .footer-container {
+            max-width: 1500px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+
+        .footer-section h3 {
+            color: #FFCB05;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+
+        .footer-section p,
+        .footer-section li {
+            color: #b2bec3;
+            line-height: 1.8;
+            font-size: 0.9em;
+        }
+
+        .footer-section ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-section ul li::before {
+            content: "✦ ";
+            color: #FFCB05;
+        }
+
+        .footer-bottom {
+            max-width: 1500px;
+            margin: 20px auto 0;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 203, 5, 0.2);
+            text-align: center;
+            color: #636e72;
+            font-size: 0.85em;
+        }
+
+        .footer-bottom .highlight {
+            color: #FFCB05;
+        }
+
+        .footer-bottom .heart {
+            color: #FF6B6B;
+        }
+
+        /* ===== FAQ ===== */
+        .faq-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 25px;
+            padding: 30px;
+            margin-top: 30px;
+            box-shadow: 0 10px 50px rgba(0,0,0,0.15);
+            border: 2px solid rgba(255, 203, 5, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .faq-section h2 {
+            color: #1a1a2e;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            border-bottom: 3px solid #FFCB05;
+            padding-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .faq-item {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #dfe6e9;
+        }
+
+        .faq-item:last-child {
+            border-bottom: none;
+        }
+
+        .faq-item h3 {
+            color: #2d3436;
+            font-size: 1.05em;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .faq-item h3::before {
+            content: "❓";
+            font-size: 1.1em;
+        }
+
+        .faq-item p {
+            color: #636e72;
+            line-height: 1.6;
+        }
+
+        .faq-item .faq-edit-btn {
+            background: linear-gradient(135deg, #74b9ff, #0984e3);
+            color: white;
+            border: none;
+            padding: 6px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.8em;
+            margin-top: 8px;
+            transition: all 0.3s;
+        }
+
+        .faq-item .faq-edit-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(9, 132, 227, 0.3);
+        }
+
+        /* ===== TOAST ===== */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: rgba(26, 26, 46, 0.95);
+            color: white;
+            padding: 18px 30px;
+            border-radius: 50px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            z-index: 6000;
+            animation: slideInToast 0.5s ease;
+            display: none;
+            max-width: 400px;
+            border: 2px solid #FFCB05;
+            font-weight: 500;
+            backdrop-filter: blur(10px);
+        }
+
+        .toast.show {
+            display: block;
+        }
+
+        @keyframes slideInToast {
+            from {
+                transform: translateX(100%) scale(0.9);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0) scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+            }
+
+            .search-bar {
+                width: 100%;
+            }
+
+            .header-controls {
+                justify-content: center;
+            }
+
+            .products-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                gap: 15px;
+            }
+
+            .admin-table {
+                font-size: 0.8em;
+            }
+
+            .admin-table td,
+            .admin-table th {
+                padding: 8px;
+            }
+
+            .product-modal-box .form-row {
+                flex-direction: column;
+            }
+
+            .modal-box {
+                padding: 25px;
+                margin: 10px;
+            }
+
+            .footer-container {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .toast {
+                bottom: 15px;
+                right: 15px;
+                left: 15px;
+                max-width: none;
+                border-radius: 25px;
+            }
+
+            .image-preview-container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .github-config .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .admin-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .admin-actions {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .products-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+            }
+
+            .product-info {
+                padding: 12px;
+            }
+
+            .product-title {
+                font-size: 0.85em;
+                min-height: 36px;
+            }
+
+            .product-price {
+                font-size: 1.2em;
+            }
+
+            .btn-whatsapp {
+                padding: 10px;
+                font-size: 0.8em;
+            }
+
+            .admin-actions button {
+                padding: 10px 16px;
+                font-size: 0.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== HEADER ===== -->
+    <header class="amazon-header">
+        <div class="header-container">
+            <a href="#" class="logo" onclick="location.reload()">
+                <span class="logo-icon">⚡</span>
+                <span>
+                    <span class="logo-text">PokéTienda</span>
+                    <span class="logo-sub">Online</span>
+                </span>
+            </a>
+
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="🔍 Buscar productos..." onkeyup="filterProducts()">
+                <button onclick="filterProducts()">Buscar</button>
+            </div>
+
+            <div class="header-controls">
+                <select class="currency-selector" id="currencySelector" onchange="changeCurrency()">
+                    <option value="USD">💵 USD ($)</option>
+                    <option value="CUP_EFECTIVO">🇨🇺 CUP Efectivo ($)</option>
+                    <option value="CUP_TRANSFERENCIA">🇨🇺 CUP Transferencia ($)</option>
+                    <option value="TARJETA_CLASICA">💳 Tarjeta Clásica ($)</option>
+                    <option value="TARJETA_TROPICAL">💳 Tarjeta Tropical ($)</option>
+                    <option value="EUR">🇪🇺 Euro (€)</option>
+                    <option value="ZELLE">🏦 Zelle ($)</option>
+                </select>
+                <button class="admin-btn" id="adminToggleBtn">🔐 Admin</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- ===== CONTENIDO PRINCIPAL ===== -->
+    <div class="main-container">
+
+        <!-- PANEL ADMIN -->
+        <div class="admin-panel" id="adminPanel">
+            <div class="admin-header">
+                <h2>
+                    <span class="emoji">📊</span> Panel de Administración
+                    <span style="font-size:0.6em;color:#636e72;">⚡ Pokémon Style</span>
+                </h2>
+                <div class="admin-actions">
+                    <button class="btn-add" onclick="showAddProductForm()">➕ Agregar Producto</button>
+                    <button class="btn-sync" onclick="syncToGitHub()" id="syncBtn">💾 Guardar en GitHub</button>
+                    <button class="btn-load" onclick="loadFromGitHub()">📥 Cargar datos</button>
+                    <button class="btn-logout" onclick="logout()">🚪 Salir</button>
+                </div>
+            </div>
+
+            <!-- ⭐ CONFIGURACIÓN DE GITHUB -->
+            <div class="github-config">
+                <h3>🐙 CONFIGURACIÓN DE GITHUB</h3>
+                <p class="subtitle">✅ Guarda tus productos directamente en tu repositorio de GitHub</p>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>🔑 Token de Acceso Personal:</label>
+                        <input type="text" id="githubToken" 
+                               placeholder="ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+                               onchange="saveGitHubConfig()">
+                        <small style="color:#636e72;font-size:0.75em;margin-top:3px;">📌 Crea en: GitHub → Settings → Developer settings → Personal access tokens</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label>👤 Usuario de GitHub:</label>
+                        <input type="text" id="githubUser" 
+                               placeholder="tu-usuario"
+                               onchange="saveGitHubConfig()">
+                    </div>
+
+                    <div class="form-group">
+                        <label>📂 Repositorio:</label>
+                        <input type="text" id="githubRepo" 
+                               placeholder="tienda-online"
+                               onchange="saveGitHubConfig()">
+                        <small style="color:#636e72;font-size:0.75em;margin-top:3px;">📌 El mismo donde está alojada tu tienda</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label>📄 Archivo de datos:</label>
+                        <input type="text" id="githubFile" 
+                               value="tienda-data.json"
+                               onchange="saveGitHubConfig()">
+                        <small style="color:#636e72;font-size:0.75em;margin-top:3px;">📌 Se crea automáticamente en tu repositorio</small>
+                    </div>
+                </div>
+
+                <div style="margin-top:15px;">
+                    <span class="github-status" id="githubStatus">⚠️ No configurado</span>
+                </div>
+
+                <div class="btn-group">
+                    <button class="btn-github-save" onclick="saveGitHubConfig()">💾 Guardar Configuración</button>
+                    <button class="btn-github-upload" onclick="syncToGitHub()">☁️ Subir a GitHub</button>
+                    <button class="btn-github-download" onclick="loadFromGitHub()">📥 Cargar desde GitHub</button>
+                </div>
+
+                <small style="display:block; color:#636e72; margin-top:12px; font-size:0.85em;">
+                    💡 Los datos se guardan como JSON en: <span id="githubFileUrl" style="color:#6c5ce7;font-weight:600;">https://github.com/tu-usuario/tu-repo/blob/main/tienda-data.json</span>
+                </small>
+            </div>
+
+            <!-- CONFIGURACIÓN DE WHATSAPP -->
+            <div class="whatsapp-config">
+                <h3>📱 Configuración de WhatsApp</h3>
+                <label for="whatsappNumber">Número de WhatsApp (con código de país):</label>
+                <input type="text" id="whatsappNumber" placeholder="Ej: 5353375958" 
+                       onchange="updateWhatsAppNumber()">
+                <small>📌 Ejemplo para Cuba: 5353375958 | Argentina: 5491123456789 | México: 521234567890</small>
+            </div>
+
+            <!-- TABLA DE PRODUCTOS -->
+            <div class="admin-table-wrapper">
+                <div id="adminTableContainer"></div>
+            </div>
+        </div>
+
+        <!-- PRODUCTOS -->
+        <div class="products-grid" id="productsContainer"></div>
+
+        <!-- FAQ -->
+        <div class="faq-section" id="faqSection">
+            <h2>❓ Preguntas Frecuentes</h2>
+            <div id="faqContainer">
+                <!-- Las FAQ se cargan desde JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-section">
+                <h3>⚡ PokéTienda</h3>
+                <p>Tu tienda de confianza para productos de calidad. ¡Atrapa las mejores ofertas!</p>
+            </div>
+            <div class="footer-section">
+                <h3>📋 Información</h3>
+                <ul>
+                    <li>Envíos a todo el país</li>
+                    <li>Garantía en todos los productos</li>
+                    <li>Aceptamos múltiples formas de pago</li>
+                    <li>Atención al cliente 24/7</li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>💳 Métodos de Pago</h3>
+                <ul id="paymentMethodsList">
+                    <!-- Se carga desde JavaScript -->
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>📞 Contacto</h3>
+                <p>📱 WhatsApp: <span id="footerWhatsApp">+54 9 11 2345-6789</span></p>
+                <p>✉️ Email: pokedienda@online.com</p>
+                <p>🕐 Lunes a Viernes 9:00 - 18:00</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>
+                © 2026 <span class="highlight">⚡ PokéTienda</span>. Todos los derechos reservados. 
+                Hecho con <span class="heart">❤</span> para nuestros entrenadores.
+            </p>
+        </div>
+    </footer>
+
+    <!-- ===== MODALES ===== -->
+    <div class="modal-overlay" id="guaranteeModal">
+        <div class="modal-box">
+            <button class="modal-close" onclick="closeGuaranteeModal()">✕</button>
+            <h2>🛡️ Garantía del Producto</h2>
+            <p><strong>Producto:</strong> <span class="product-name" id="guaranteeProductName"></span></p>
+            <div class="guarantee-text" id="guaranteeContent"></div>
+            <div class="modal-actions">
+                <button class="btn-continue" onclick="confirmGuarantee()">✅ Continuar con la compra</button>
+                <button class="btn-cancel" onclick="closeGuaranteeModal()">❌ Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="login-overlay" id="loginModal">
+        <div class="login-box">
+            <span class="login-icon">⚡</span>
+            <h2>🔐 Acceso Administrador</h2>
+            <p>Ingresa la contraseña para acceder al panel de control</p>
+            <input type="password" id="loginPassword" placeholder="Contraseña de administrador" onkeydown="if(event.key==='Enter') login()">
+            <button onclick="login()">Ingresar</button>
+            <div class="login-error" id="loginError">❌ Contraseña incorrecta</div>
+        </div>
+    </div>
+
+    <div class="product-modal-overlay" id="productModal">
+        <div class="product-modal-box">
+            <h2 id="productModalTitle">📝 Agregar Producto</h2>
+            <input type="text" id="productTitle" placeholder="Título del producto">
+            <textarea id="productDescription" placeholder="Descripción" rows="3"></textarea>
+            
+            <div class="form-row">
+                <input type="number" id="productPrice" placeholder="Precio en USD" step="0.01">
+                <input type="text" id="productCategory" placeholder="Categoría">
+            </div>
+            
+            <div class="form-row">
+                <input type="number" id="productStock" placeholder="Stock" value="10">
+                <input type="number" id="productRating" placeholder="Rating (1-5)" step="0.1" value="4.5">
+            </div>
+            
+            <input type="number" id="productReviews" placeholder="N° Reseñas" value="0">
+
+            <!-- IMAGEN LOCAL -->
+            <div class="image-preview-container">
+                <img id="imagePreview" class="image-preview" 
+                     src="https://via.placeholder.com/100/cccccc/666666?text=Sin+imagen" 
+                     alt="Vista previa de la imagen">
+                <div class="file-upload-wrapper">
+                    <input type="file" id="productImageFile" accept="image/*" onchange="handleImageUpload(event)">
+                    <small>Selecciona una imagen desde tu computadora (JPG, PNG, GIF)</small>
+                    <small style="color:#6c5ce7;">O usa una URL en el campo de abajo</small>
+                </div>
+            </div>
+            <input type="text" id="productImage" placeholder="URL de imagen (opcional)" 
+                   oninput="updateImagePreview(this.value)">
+
+            <div class="checkbox-group">
+                <input type="checkbox" id="productGuarantee" onchange="toggleGuaranteeFields()"> 
+                <label for="productGuarantee">¿Tiene garantía?</label>
+            </div>
+
+            <div id="guaranteeFields" style="display:none;margin-bottom:15px;">
+                <textarea id="productGuaranteeText" placeholder="Texto de la garantía" rows="3"></textarea>
+            </div>
+
+            <div class="checkbox-group">
+                <input type="checkbox" id="productVisible" checked> 
+                <label for="productVisible">¿Visible en la tienda?</label>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn-add" onclick="saveProduct()" style="flex:1;">💾 Guardar</button>
+                <button class="btn-logout" onclick="closeProductModal()" style="flex:1;background:#dfe6e9;color:#2d3436;">❌ Cancelar</button>
+            </div>
+            <input type="hidden" id="editingProductId">
+            <input type="hidden" id="productImageData">
+        </div>
+    </div>
+
+    <!-- ===== MODAL EDITAR FAQ ===== -->
+    <div class="product-modal-overlay" id="faqModal">
+        <div class="product-modal-box">
+            <h2>✏️ Editar Pregunta Frecuente</h2>
+            <input type="text" id="faqTitle" placeholder="Título de la pregunta">
+            <textarea id="faqContent" placeholder="Contenido de la respuesta" rows="5"></textarea>
+            <div class="modal-actions">
+                <button class="btn-add" onclick="saveFaq()" style="flex:1;">💾 Guardar</button>
+                <button class="btn-logout" onclick="closeFaqModal()" style="flex:1;background:#dfe6e9;color:#2d3436;">❌ Cancelar</button>
+            </div>
+            <input type="hidden" id="editingFaqIndex">
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // ==========================================
+        // CONFIGURACIÓN
+        // ==========================================
+        const ADMIN_PASSWORD = 'admin123';
+        let WHATSAPP_NUMBER = '5353375958';
+        let GITHUB_TOKEN = '';
+        let GITHUB_USER = '';
+        let GITHUB_REPO = '';
+        let GITHUB_FILE = 'tienda-data.json';
+        let isSyncing = false;
+
+        // ==========================================
+        // TASAS DE CAMBIO
+        // ==========================================
+        const EXCHANGE_RATES = {
+            USD: 1,
+            CUP_EFECTIVO: 685,
+            CUP_TRANSFERENCIA: 715,
+            TARJETA_CLASICA: 1.1,
+            TARJETA_TROPICAL: 1.1,
+            EUR: 0.93,
+            ZELLE: 1.05
+        };
+
+        const CURRENCY_SYMBOLS = {
+            USD: '$',
+            CUP_EFECTIVO: '$',
+            CUP_TRANSFERENCIA: '$',
+            TARJETA_CLASICA: '$',
+            TARJETA_TROPICAL: '$',
+            EUR: '€',
+            ZELLE: '$'
+        };
+
+        const CURRENCY_NAMES = {
+            USD: 'USD',
+            CUP_EFECTIVO: 'CUP Efectivo',
+            CUP_TRANSFERENCIA: 'CUP Transferencia',
+            TARJETA_CLASICA: 'Tarjeta Clásica',
+            TARJETA_TROPICAL: 'Tarjeta Tropical',
+            EUR: 'Euro',
+            ZELLE: 'Zelle'
+        };
+
+        let currentCurrency = 'USD';
+        let isAdmin = false;
+        let selectedProductId = null;
+        let guaranteeCallback = null;
+        let isCloudDataLoaded = false;
+
+        // ==========================================
+        // FAQ
+        // ==========================================
+        let faqItems = [{
+            title: "¿Qué tipos de garantía ofrecen?",
+            content: "Ofrecemos garantía en todos nuestros productos. El período varía según el producto: 12 meses para electrónicos, 24 meses para accesorios de audio, y 36 meses para monitores y periféricos."
+        }, {
+            title: "¿Qué métodos de pago aceptan?",
+            content: "Aceptamos múltiples métodos de pago: USD (billetes), CUP en efectivo, CUP por transferencia, Tarjeta Clásica, Tarjeta Tropical, Euro y Zelle."
+        }, {
+            title: "¿Cómo funciona el cambio de moneda?",
+            content: "Selecciona tu moneda preferida en el menú desplegable. Los precios se convertirán automáticamente usando las tasas de cambio actualizadas."
+        }, {
+            title: "¿Cómo contacto con el vendedor?",
+            content: "Puedes contactarnos directamente a través del botón 'Contactar por WhatsApp' en cada producto."
+        }, {
+            title: "¿Los productos tienen disponibilidad inmediata?",
+            content: "El stock se actualiza en tiempo real. Cada producto muestra la cantidad disponible."
+        }];
+
+        // ==========================================
+        // MÉTODOS DE PAGO
+        // ==========================================
+        let paymentMethods = [
+            "💵 USD (Billetes)",
+            "🇨🇺 CUP Efectivo",
+            "🇨🇺 CUP Transferencia",
+            "💳 Tarjeta Clásica",
+            "💳 Tarjeta Tropical",
+            "🇪🇺 Euro",
+            "🏦 Zelle"
+        ];
+
+        // ==========================================
+        // PRODUCTOS
+        // ==========================================
+        let products = [{
+            id: 1,
+            title: "Laptop HP Pavilion 15",
+            description: "Intel Core i5-1135G7, 8GB RAM, 512GB SSD, Pantalla 15.6\" Full HD",
+            price: 899.99,
+            image: "https://via.placeholder.com/400x400/4CAF50/FFFFFF?text=Laptop+HP",
+            imageData: null,
+            category: "Electrónicos",
+            stock: 15,
+            rating: 4.5,
+            reviews: 128,
+            guarantee: true,
+            guaranteeText: "12 meses de garantía contra defectos de fabricación.",
+            visible: true
+        }, {
+            id: 2,
+            title: "Smartphone Samsung Galaxy S24",
+            description: "Pantalla 6.8\", 256GB, Cámara 200MP, Batería 5000mAh, 5G",
+            price: 1199.99,
+            image: "https://via.placeholder.com/400x400/2196F3/FFFFFF?text=Galaxy+S24",
+            imageData: null,
+            category: "Electrónicos",
+            stock: 8,
+            rating: 4.8,
+            reviews: 256,
+            guarantee: true,
+            guaranteeText: "18 meses de garantía. Incluye 1 año de seguro.",
+            visible: true
+        }, {
+            id: 3,
+            title: "Auriculares Sony WH-1000XM5",
+            description: "Cancelación de ruido premium, 30 horas de batería, carga rápida",
+            price: 399.99,
+            image: "https://via.placeholder.com/400x400/FF9800/FFFFFF?text=Sony+WH-1000XM5",
+            imageData: null,
+            category: "Audio",
+            stock: 0,
+            rating: 4.7,
+            reviews: 89,
+            guarantee: true,
+            guaranteeText: "24 meses de garantía contra defectos de fabricación.",
+            visible: true
+        }, {
+            id: 4,
+            title: "Tablet iPad Pro 12.9\"",
+            description: "Chip M2, 256GB, Pantalla Liquid Retina XDR",
+            price: 1299.99,
+            image: "https://via.placeholder.com/400x400/9C27B0/FFFFFF?text=iPad+Pro",
+            imageData: null,
+            category: "Electrónicos",
+            stock: 5,
+            rating: 4.9,
+            reviews: 312,
+            guarantee: true,
+            guaranteeText: "12 meses de garantía Apple.",
+            visible: true
+        }, {
+            id: 5,
+            title: "Smartwatch Apple Watch Ultra 2",
+            description: "GPS, Pantalla Retina, 49mm, Titanio, 36 horas de batería",
+            price: 799.99,
+            image: "https://via.placeholder.com/400x400/E91E63/FFFFFF?text=Apple+Watch",
+            imageData: null,
+            category: "Wearables",
+            stock: 3,
+            rating: 4.6,
+            reviews: 167,
+            guarantee: false,
+            guaranteeText: "",
+            visible: false
+        }, {
+            id: 6,
+            title: "Cámara Canon EOS R6 Mark II",
+            description: "24.2MP, 4K 60fps, WiFi, Bluetooth, Estabilización de imagen",
+            price: 2499.99,
+            image: "https://via.placeholder.com/400x400/00BCD4/FFFFFF?text=Canon+R6",
+            imageData: null,
+            category: "Fotografía",
+            stock: 2,
+            rating: 4.4,
+            reviews: 73,
+            guarantee: true,
+            guaranteeText: "24 meses de garantía. Incluye limpieza gratuita anual.",
+            visible: true
+        }, {
+            id: 7,
+            title: "Monitor Gaming ASUS ROG 27\"",
+            description: "4K, 144Hz, 1ms, HDR600, G-Sync, HDMI 2.1",
+            price: 699.99,
+            image: "https://via.placeholder.com/400x400/FF5722/FFFFFF?text=Monitor+ROG",
+            imageData: null,
+            category: "Gaming",
+            stock: 10,
+            rating: 4.3,
+            reviews: 45,
+            guarantee: true,
+            guaranteeText: "36 meses de garantía.",
+            visible: true
+        }, {
+            id: 8,
+            title: "Teclado Mecánico Logitech G Pro",
+            description: "Switches GX, RGB, 60%, Cable desmontable",
+            price: 149.99,
+            image: "https://via.placeholder.com/400x400/8BC34A/FFFFFF?text=Teclado+G+Pro",
+            imageData: null,
+            category: "Gaming",
+            stock: 20,
+            rating: 4.2,
+            reviews: 34,
+            guarantee: false,
+            guaranteeText: "",
+            visible: true
+        }];
+
+        let nextId = 9;
+
+        // ==========================================
+        // FUNCIONES DE WHATSAPP
+        // ==========================================
+        function openWhatsApp(product) {
+            let phoneNumber = WHATSAPP_NUMBER.replace(/[+\s-]/g, '');
+            if (phoneNumber.startsWith('0')) {
+                phoneNumber = phoneNumber.substring(1);
+            }
+
+            const priceFormatted = formatPrice(product.price);
+            const currencyName = CURRENCY_NAMES[currentCurrency] || 'USD';
+
+            const message = 
+`¡Hola! Quiero comprar el siguiente producto:
+
+📦 *${product.title}*
+📝 *Descripción:* ${product.description}
+💰 *Precio:* ${priceFormatted} (${currencyName})
+🛡️ *Garantía:* ${product.guarantee ? 'Sí, ' + product.guaranteeText : 'No'}
+
+¿Podrían darme más información sobre disponibilidad y formas de pago?`;
+
+            const encodedMessage = encodeURIComponent(message);
+            const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+            window.open(whatsappUrl, '_blank');
+        }
+
+        function updateWhatsAppNumber() {
+            const input = document.getElementById('whatsappNumber');
+            let newNumber = input.value.replace(/[+\s-]/g, '');
+            
+            if (newNumber && newNumber.length > 5) {
+                WHATSAPP_NUMBER = newNumber;
+                document.getElementById('footerWhatsApp').textContent = '+' + newNumber;
+                saveGitHubConfig();
+                showToast('✅ Número actualizado: +' + newNumber);
+            } else {
+                showToast('⚠️ Ingresa un número válido');
+                input.value = WHATSAPP_NUMBER;
+            }
+        }
+
+        // ==========================================
+        // FUNCIONES DE GITHUB
+        // ==========================================
+        function saveGitHubConfig() {
+            const token = document.getElementById('githubToken').value.trim();
+            const user = document.getElementById('githubUser').value.trim();
+            const repo = document.getElementById('githubRepo').value.trim();
+            const file = document.getElementById('githubFile').value.trim() || 'tienda-data.json';
+            
+            if (token) {
+                GITHUB_TOKEN = token;
+                GITHUB_USER = user;
+                GITHUB_REPO = repo;
+                GITHUB_FILE = file;
+                
+                localStorage.setItem('github_token', token);
+                localStorage.setItem('github_user', user);
+                localStorage.setItem('github_repo', repo);
+                localStorage.setItem('github_file', file);
+                
+                updateGitHubStatus('info', '✅ Configuración guardada');
+                updateGitHubFileUrl();
+                showToast('✅ Configuración de GitHub guardada');
+            } else {
+                updateGitHubStatus('unsync', '⚠️ Falta el Token');
+                showToast('⚠️ Por favor ingresa tu Token de GitHub');
+            }
+        }
+
+        function loadGitHubConfig() {
+            const token = localStorage.getItem('github_token');
+            const user = localStorage.getItem('github_user');
+            const repo = localStorage.getItem('github_repo');
+            const file = localStorage.getItem('github_file') || 'tienda-data.json';
+            
+            if (token) {
+                GITHUB_TOKEN = token;
+                GITHUB_USER = user || '';
+                GITHUB_REPO = repo || '';
+                GITHUB_FILE = file;
+                
+                document.getElementById('githubToken').value = token;
+                document.getElementById('githubUser').value = user || '';
+                document.getElementById('githubRepo').value = repo || '';
+                document.getElementById('githubFile').value = file;
+                
+                updateGitHubFileUrl();
+                if (user && repo) {
+                    updateGitHubStatus('sync', '✅ Configurado');
+                } else {
+                    updateGitHubStatus('info', '⚠️ Completa usuario y repositorio');
+                }
+                return true;
+            }
+            updateGitHubStatus('unsync', '⚠️ No configurado');
+            return false;
+        }
+
+        function updateGitHubStatus(type, text) {
+            const status = document.getElementById('githubStatus');
+            status.className = 'github-status ' + type;
+            status.textContent = text;
+        }
+
+        function updateGitHubFileUrl() {
+            const url = document.getElementById('githubFileUrl');
+            if (GITHUB_USER && GITHUB_REPO) {
+                url.textContent = `https://github.com/${GITHUB_USER}/${GITHUB_REPO}/blob/main/${GITHUB_FILE}`;
+            } else {
+                url.textContent = 'https://github.com/tu-usuario/tu-repo/blob/main/tienda-data.json';
+            }
+        }
+
+        function getGitHubData() {
+            return {
+                products: products,
+                nextId: nextId,
+                faqItems: faqItems,
+                paymentMethods: paymentMethods,
+                whatsappNumber: WHATSAPP_NUMBER
+            };
+        }
+
+        // ==========================================
+        // SINCORNIZAR A GITHUB
+        // ==========================================
+        async function syncToGitHub() {
+            if (isSyncing) return;
+            
+            if (!GITHUB_TOKEN || !GITHUB_USER || !GITHUB_REPO) {
+                showToast('⚠️ Configura primero GitHub (Token, Usuario y Repositorio)');
+                return;
+            }
+
+            isSyncing = true;
+            const syncBtn = document.getElementById('syncBtn');
+            syncBtn.disabled = true;
+            syncBtn.textContent = '⏳ Subiendo...';
+            updateGitHubStatus('loading', '⏳ Subiendo datos...');
+
+            try {
+                const data = getGitHubData();
+                const content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
+
+                // Intentar obtener el archivo actual (para obtener el SHA)
+                let sha = null;
+                try {
+                    const checkResponse = await fetch(
+                        `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${GITHUB_FILE}`,
+                        { headers: { 'Authorization': `token ${GITHUB_TOKEN}` } }
+                    );
+                    if (checkResponse.ok) {
+                        const fileData = await checkResponse.json();
+                        sha = fileData.sha;
+                    }
+                } catch (e) {}
+
+                // Crear o actualizar el archivo
+                const response = await fetch(
+                    `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${GITHUB_FILE}`,
+                    {
+                        method: 'PUT',
+                        headers: {
+                            'Authorization': `token ${GITHUB_TOKEN}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            message: 'Actualización de datos de la tienda',
+                            content: content,
+                            sha: sha || undefined
+                        })
+                    }
+                );
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.message || 'Error al subir');
+                }
+
+                updateGitHubStatus('sync', '✅ Datos subidos a GitHub');
+                showToast('✅ Datos guardados en GitHub correctamente');
+                console.log('☁️ Datos subidos a GitHub');
+
+            } catch (error) {
+                console.error('Error al sincronizar:', error);
+                updateGitHubStatus('unsync', '❌ Error: ' + error.message);
+                showToast('❌ Error al subir: ' + error.message);
+            }
+
+            isSyncing = false;
+            syncBtn.disabled = false;
+            syncBtn.textContent = '💾 Guardar en GitHub';
+        }
+
+        // ==========================================
+        // CARGAR DESDE GITHUB
+        // ==========================================
+        async function loadFromGitHub() {
+            if (!GITHUB_TOKEN || !GITHUB_USER || !GITHUB_REPO) {
+                showToast('⚠️ Configura primero GitHub');
+                return;
+            }
+
+            updateGitHubStatus('loading', '⏳ Cargando desde GitHub...');
+
+            try {
+                const response = await fetch(
+                    `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${GITHUB_FILE}`,
+                    { headers: { 'Authorization': `token ${GITHUB_TOKEN}` } }
+                );
+
+                if (!response.ok) {
+                    throw new Error('Archivo no encontrado en GitHub');
+                }
+
+                const fileData = await response.json();
+                const content = JSON.parse(decodeURIComponent(escape(atob(fileData.content))));
+                
+                if (content && content.products) {
+                    products = content.products;
+                    nextId = content.nextId || products.length + 1;
+                    if (content.faqItems) faqItems = content.faqItems;
+                    if (content.paymentMethods) paymentMethods = content.paymentMethods;
+                    if (content.whatsappNumber) {
+                        WHATSAPP_NUMBER = content.whatsappNumber;
+                        document.getElementById('whatsappNumber').value = WHATSAPP_NUMBER;
+                        document.getElementById('footerWhatsApp').textContent = '+' + WHATSAPP_NUMBER;
+                    }
+                    
+                    isCloudDataLoaded = true;
+                    renderProducts();
+                    renderAdminTable();
+                    renderFAQ();
+                    updateGitHubStatus('sync', '✅ Datos cargados desde GitHub');
+                    showToast('✅ Datos cargados desde GitHub correctamente');
+                    console.log('☁️ Datos cargados desde GitHub');
+                }
+
+            } catch (error) {
+                console.warn('⚠️ No se pudieron cargar datos desde GitHub:', error);
+                updateGitHubStatus('unsync', '⚠️ No se pudo cargar: ' + error.message);
+                showToast('⚠️ No se pudo cargar: ' + error.message);
+            }
+        }
+
+        // ==========================================
+        // FUNCIONES DE IMAGEN LOCAL
+        // ==========================================
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const imageData = e.target.result;
+                document.getElementById('productImageData').value = imageData;
+                document.getElementById('productImage').value = '';
+                document.getElementById('imagePreview').src = imageData;
+                showToast('✅ Imagen cargada correctamente');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function updateImagePreview(url) {
+            const preview = document.getElementById('imagePreview');
+            if (url) {
+                preview.src = url;
+                document.getElementById('productImageData').value = '';
+            } else {
+                const imageData = document.getElementById('productImageData').value;
+                if (!imageData) {
+                    preview.src = 'https://via.placeholder.com/100/cccccc/666666?text=Sin+imagen';
+                }
+            }
+        }
+
+        function getProductImage() {
+            const imageData = document.getElementById('productImageData').value;
+            if (imageData) {
+                return imageData;
+            }
+            const imageUrl = document.getElementById('productImage').value.trim();
+            if (imageUrl) {
+                return imageUrl;
+            }
+            return 'https://via.placeholder.com/400x400/cccccc/666666?text=Sin+imagen';
+        }
+
+        function resetImageUpload() {
+            document.getElementById('productImageFile').value = '';
+            document.getElementById('productImageData').value = '';
+            document.getElementById('productImage').value = '';
+            document.getElementById('imagePreview').src = 'https://via.placeholder.com/100/cccccc/666666?text=Sin+imagen';
+        }
+
+        // ==========================================
+        // FUNCIONES DE MONEDA
+        // ==========================================
+        function formatPrice(priceUSD) {
+            const rate = EXCHANGE_RATES[currentCurrency] || 1;
+            const converted = priceUSD * rate;
+            const symbol = CURRENCY_SYMBOLS[currentCurrency] || '$';
+
+            let formatted;
+            if (currentCurrency === 'EUR') {
+                formatted = `${symbol}${converted.toFixed(2)}`;
+            } else if (currentCurrency === 'CUP_EFECTIVO' || currentCurrency === 'CUP_TRANSFERENCIA') {
+                formatted = `${symbol}${converted.toFixed(0)}`;
+            } else {
+                formatted = `${symbol}${converted.toFixed(2)}`;
+            }
+
+            return formatted;
+        }
+
+        function changeCurrency() {
+            const selector = document.getElementById('currencySelector');
+            currentCurrency = selector.value;
+            renderProducts();
+            renderAdminTable();
+        }
+
+        // ==========================================
+        // FUNCIONES DE RENDERIZADO
+        // ==========================================
+        function renderProducts() {
+            const container = document.getElementById('productsContainer');
+            if (!container) return;
+
+            container.innerHTML = '';
+
+            const searchTerm = document.getElementById('searchInput')?.value.toLowerCase() || '';
+
+            const visibleProducts = products.filter(p => p.visible !== false);
+            const filtered = visibleProducts.filter(p => {
+                return p.title.toLowerCase().includes(searchTerm) ||
+                    p.description.toLowerCase().includes(searchTerm);
+            });
+
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div style="grid-column:1/-1;text-align:center;padding:50px;color:#dfe6e9;font-size:1.2em;">
+                        <span style="font-size:3em;display:block;margin-bottom:20px;">🔍</span>
+                        <h3 style="color:white;">No se encontraron productos</h3>
+                        <p style="color:#b2bec3;">Intenta con otros términos de búsqueda</p>
+                    </div>
+                `;
+                return;
+            }
+
+            filtered.forEach(product => {
+                const card = document.createElement('div');
+                card.className = 'product-card';
+
+                const stars = '⭐'.repeat(Math.floor(product.rating)) + '☆'.repeat(5 - Math.floor(product.rating));
+
+                let stockClass = 'in-stock';
+                let stockText = `✅ ${product.stock} unidades`;
+                if (product.stock === 0) {
+                    stockClass = 'out-of-stock';
+                    stockText = '❌ Agotado';
+                } else if (product.stock < 5) {
+                    stockClass = 'low-stock';
+                    stockText = `⚠️ Últimas ${product.stock}`;
+                }
+
+                const guaranteeHtml = product.guarantee ?
+                    `<span class="guarantee-badge">🛡️ Con garantía</span>` :
+                    '';
+
+                card.innerHTML = `
+                    <div class="product-image-container">
+                        <img src="${product.image}" alt="${product.title}" class="product-image"
+                             onerror="this.src='https://via.placeholder.com/400x400/cccccc/666666?text=Sin+imagen'">
+                    </div>
+                    <div class="product-info">
+                        <div class="product-title">${product.title}</div>
+                        <div class="product-rating">
+                            <span class="stars">${stars}</span>
+                            <span class="reviews">(${product.reviews} reseñas)</span>
+                        </div>
+                        <div class="product-price-container">
+                            <span class="product-price">${formatPrice(product.price)}</span>
+                        </div>
+                        <div class="product-description">${product.description}</div>
+                        <div class="product-meta">
+                            <span class="stock-status ${stockClass}">${stockText}</span>
+                            ${guaranteeHtml}
+                        </div>
+                        <div class="product-buttons">
+                            <button class="btn-whatsapp" onclick="buyProductWhatsApp(${product.id})" 
+                                    ${product.stock === 0 ? 'disabled' : ''}>
+                                <span class="whatsapp-icon">📱</span> Contactar por WhatsApp
+                            </button>
+                        </div>
+                    </div>
+                `;
+
+                container.appendChild(card);
+            });
+        }
+
+        function renderAdminTable() {
+            const container = document.getElementById('adminTableContainer');
+            if (!container) return;
+
+            document.getElementById('whatsappNumber').value = WHATSAPP_NUMBER;
+
+            if (!products || products.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align:center;padding:40px;color:#636e72;">
+                        <p style="font-size:1.1em;">📦 No hay productos agregados</p>
+                        <p style="font-size:0.9em;">Haz clic en "Agregar Producto" para comenzar</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = `
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Imagen</th>
+                            <th>Producto</th>
+                            <th>Precio (USD)</th>
+                            <th>Stock</th>
+                            <th>Garantía</th>
+                            <th>Visibilidad</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            products.forEach(product => {
+                const visibleText = product.visible !== false ? '✅ Visible' : '❌ Oculto';
+                const visibleClass = product.visible !== false ? 'visible' : 'hidden';
+                html += `
+                    <tr>
+                        <td><img src="${product.image}" class="product-thumb" 
+                             onerror="this.src='https://via.placeholder.com/50/cccccc/666666?text=No'"></td>
+                        <td><strong>${product.title}</strong><br><small style="color:#636e72;">${product.category || 'Sin categoría'}</small></td>
+                        <td>$${product.price.toFixed(2)}</td>
+                        <td>${product.stock}</td>
+                        <td>${product.guarantee ? '✅ Sí' : '❌ No'}</td>
+                        <td>
+                            <button class="btn-toggle ${visibleClass}" onclick="toggleVisibility(${product.id})">
+                                ${visibleText}
+                            </button>
+                        </td>
+                        <td>
+                            <button class="btn-edit" onclick="editProduct(${product.id})">✏️ Editar</button>
+                            <button class="btn-delete" onclick="deleteProduct(${product.id})">🗑️ Eliminar</button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            html += `
+                    </tbody>
+                </table>
+                <div class="table-footer">
+                    <span>Total: ${products.length} productos</span>
+                    <span>${isCloudDataLoaded ? '☁️ Datos desde GitHub' : '💻 Datos locales'}</span>
+                </div>
+            `;
+
+            container.innerHTML = html;
+        }
+
+        function renderFAQ() {
+            const container = document.getElementById('faqContainer');
+            if (!container) return;
+
+            let html = '';
+            faqItems.forEach((item, index) => {
+                html += `
+                    <div class="faq-item">
+                        <h3>${item.title}</h3>
+                        <p>${item.content}</p>
+                        ${isAdmin ? `<button class="faq-edit-btn" onclick="editFaq(${index})">✏️ Editar</button>` : ''}
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        function renderPaymentMethods() {
+            const container = document.getElementById('paymentMethodsList');
+            if (!container) return;
+
+            container.innerHTML = paymentMethods.map(m => `<li>${m}</li>`).join('');
+        }
+
+        // ==========================================
+        // FUNCIONES DE FILTRO
+        // ==========================================
+        function filterProducts() {
+            renderProducts();
+        }
+
+        // ==========================================
+        // FUNCIONES DE COMPRA
+        // ==========================================
+        function buyProductWhatsApp(productId) {
+            const product = products.find(p => p.id === productId);
+            if (!product) {
+                showToast('❌ Producto no encontrado');
+                return;
+            }
+
+            if (product.stock === 0) {
+                showToast('❌ Producto agotado');
+                return;
+            }
+
+            if (product.guarantee && product.guaranteeText) {
+                selectedProductId = productId;
+                guaranteeCallback = 'whatsapp';
+                showGuaranteeModal(product);
+                return;
+            }
+
+            openWhatsApp(product);
+        }
+
+        // ==========================================
+        // MODAL DE GARANTÍA
+        // ==========================================
+        function showGuaranteeModal(product) {
+            document.getElementById('guaranteeProductName').textContent = product.title;
+
+            let content = '';
+            if (product.guaranteeText) {
+                content = `
+                    <h3>🛡️ Garantía</h3>
+                    <p>${product.guaranteeText}</p>
+                    <p style="margin-top:10px;color:#636e72;font-size:0.9em;">
+                        ⚠️ Al continuar, aceptas los términos de la garantía.
+                    </p>
+                `;
+            } else {
+                content = `<p>✅ Este producto cuenta con garantía.</p>`;
+            }
+
+            document.getElementById('guaranteeContent').innerHTML = content;
+            document.getElementById('guaranteeModal').classList.add('active');
+        }
+
+        function closeGuaranteeModal() {
+            document.getElementById('guaranteeModal').classList.remove('active');
+            selectedProductId = null;
+            guaranteeCallback = null;
+        }
+
+        function confirmGuarantee() {
+            closeGuaranteeModal();
+            const product = products.find(p => p.id === selectedProductId);
+            if (product) {
+                openWhatsApp(product);
+            }
+            selectedProductId = null;
+            guaranteeCallback = null;
+        }
+
+        // ==========================================
+        // AUTENTICACIÓN
+        // ==========================================
+        function login() {
+            const password = document.getElementById('loginPassword').value;
+            if (password === ADMIN_PASSWORD) {
+                isAdmin = true;
+                document.getElementById('loginModal').classList.remove('active');
+                document.getElementById('loginPassword').value = '';
+                document.getElementById('loginError').style.display = 'none';
+                document.getElementById('adminToggleBtn').textContent = '👑 Admin';
+                document.getElementById('adminToggleBtn').classList.add('active');
+                document.getElementById('adminPanel').classList.add('active');
+                renderAdminTable();
+                renderFAQ();
+                showToast('✅ Sesión iniciada como administrador');
+            } else {
+                document.getElementById('loginError').style.display = 'block';
+                document.getElementById('loginPassword').value = '';
+                document.getElementById('loginPassword').focus();
+            }
+        }
+
+        function logout() {
+            isAdmin = false;
+            document.getElementById('adminPanel').classList.remove('active');
+            document.getElementById('adminToggleBtn').textContent = '🔐 Admin';
+            document.getElementById('adminToggleBtn').classList.remove('active');
+            renderFAQ();
+            showToast('👋 Sesión cerrada');
+        }
+
+        // ==========================================
+        // EVENTOS DEL ADMIN
+        // ==========================================
+        document.getElementById('adminToggleBtn').addEventListener('click', function() {
+            if (isAdmin) {
+                document.getElementById('adminPanel').classList.toggle('active');
+                if (document.getElementById('adminPanel').classList.contains('active')) {
+                    renderAdminTable();
+                }
+            } else {
+                document.getElementById('loginModal').classList.add('active');
+                document.getElementById('loginPassword').focus();
+            }
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                document.getElementById('loginModal').classList.remove('active');
+                document.getElementById('productModal').classList.remove('active');
+                document.getElementById('guaranteeModal').classList.remove('active');
+                document.getElementById('faqModal').classList.remove('active');
+            }
+        });
+
+        // ==========================================
+        // CRUD DE PRODUCTOS
+        // ==========================================
+        function showAddProductForm() {
+            if (!isAdmin) {
+                showToast('⚠️ Debes iniciar sesión como administrador');
+                return;
+            }
+            document.getElementById('productModalTitle').textContent = '📝 Agregar Producto';
+            document.getElementById('productTitle').value = '';
+            document.getElementById('productDescription').value = '';
+            document.getElementById('productPrice').value = '';
+            document.getElementById('productImage').value = '';
+            document.getElementById('productImageData').value = '';
+            document.getElementById('productCategory').value = '';
+            document.getElementById('productStock').value = '10';
+            document.getElementById('productRating').value = '4.5';
+            document.getElementById('productReviews').value = '0';
+            document.getElementById('productGuarantee').checked = false;
+            document.getElementById('productGuaranteeText').value = '';
+            document.getElementById('guaranteeFields').style.display = 'none';
+            document.getElementById('productVisible').checked = true;
+            document.getElementById('editingProductId').value = '';
+            resetImageUpload();
+            document.getElementById('productModal').classList.add('active');
+        }
+
+        function editProduct(id) {
+            if (!isAdmin) {
+                showToast('⚠️ Debes iniciar sesión como administrador');
+                return;
+            }
+            const product = products.find(p => p.id === id);
+            if (!product) return;
+
+            document.getElementById('productModalTitle').textContent = '✏️ Editar Producto';
+            document.getElementById('productTitle').value = product.title;
+            document.getElementById('productDescription').value = product.description;
+            document.getElementById('productPrice').value = product.price;
+            document.getElementById('productImage').value = product.image;
+            document.getElementById('productImageData').value = product.imageData || '';
+            document.getElementById('productCategory').value = product.category || '';
+            document.getElementById('productStock').value = product.stock;
+            document.getElementById('productRating').value = product.rating;
+            document.getElementById('productReviews').value = product.reviews;
+            document.getElementById('productGuarantee').checked = product.guarantee;
+            document.getElementById('productGuaranteeText').value = product.guaranteeText || '';
+            document.getElementById('guaranteeFields').style.display = product.guarantee ? 'block' : 'none';
+            document.getElementById('productVisible').checked = product.visible !== false;
+            document.getElementById('editingProductId').value = id;
+
+            const preview = document.getElementById('imagePreview');
+            if (product.imageData) {
+                preview.src = product.imageData;
+            } else if (product.image) {
+                preview.src = product.image;
+            } else {
+                preview.src = 'https://via.placeholder.com/100/cccccc/666666?text=Sin+imagen';
+            }
+
+            document.getElementById('productModal').classList.add('active');
+        }
+
+        function toggleVisibility(id) {
+            if (!isAdmin) {
+                showToast('⚠️ Debes iniciar sesión como administrador');
+                return;
+            }
+            const product = products.find(p => p.id === id);
+            if (!product) return;
+
+            product.visible = product.visible === false ? true : false;
+            renderAdminTable();
+            renderProducts();
+            showToast(`✅ Producto ${product.visible ? 'visible' : 'oculto'}`);
+        }
+
+        function toggleGuaranteeFields() {
+            const checked = document.getElementById('productGuarantee').checked;
+            document.getElementById('guaranteeFields').style.display = checked ? 'block' : 'none';
+        }
+
+        function saveProduct() {
+            const id = document.getElementById('editingProductId').value;
+            const title = document.getElementById('productTitle').value.trim();
+            const description = document.getElementById('productDescription').value.trim();
+            const price = parseFloat(document.getElementById('productPrice').value);
+            const image = getProductImage();
+            const imageData = document.getElementById('productImageData').value;
+            const category = document.getElementById('productCategory').value.trim();
+            const stock = parseInt(document.getElementById('productStock').value) || 0;
+            const rating = parseFloat(document.getElementById('productRating').value) || 4.5;
+            const reviews = parseInt(document.getElementById('productReviews').value) || 0;
+            const guarantee = document.getElementById('productGuarantee').checked;
+            const guaranteeText = document.getElementById('productGuaranteeText').value.trim();
+            const visible = document.getElementById('productVisible').checked;
+
+            if (!title || !description || isNaN(price) || price <= 0) {
+                showToast('⚠️ Completa todos los campos correctamente');
+                return;
+            }
+
+            if (id) {
+                const index = products.findIndex(p => p.id === parseInt(id));
+                if (index !== -1) {
+                    products[index] = {
+                        ...products[index],
+                        title,
+                        description,
+                        price,
+                        image,
+                        imageData: imageData || null,
+                        category,
+                        stock,
+                        rating,
+                        reviews,
+                        guarantee,
+                        guaranteeText: guarantee ? guaranteeText : '',
+                        visible
+                    };
+                    showToast('✅ Producto actualizado correctamente');
+                }
+            } else {
+                const newProduct = {
+                    id: nextId++,
+                    title,
+                    description,
+                    price,
+                    image,
+                    imageData: imageData || null,
+                    category,
+                    stock,
+                    rating,
+                    reviews,
+                    guarantee,
+                    guaranteeText: guarantee ? guaranteeText : '',
+                    visible
+                };
+                products.push(newProduct);
+                showToast('✅ Producto agregado correctamente');
+            }
+
+            closeProductModal();
+            renderAdminTable();
+            renderProducts();
+        }
+
+        function deleteProduct(id) {
+            if (!isAdmin) return;
+            if (confirm('¿Estás seguro de eliminar este producto?')) {
+                products = products.filter(p => p.id !== id);
+                renderAdminTable();
+                renderProducts();
+                showToast('🗑️ Producto eliminado');
+            }
+        }
+
+        function closeProductModal() {
+            document.getElementById('productModal').classList.remove('active');
+            resetImageUpload();
+        }
+
+        // ==========================================
+        // CRUD DE FAQ
+        // ==========================================
+        function editFaq(index) {
+            if (!isAdmin) {
+                showToast('⚠️ Debes iniciar sesión como administrador');
+                return;
+            }
+            document.getElementById('faqTitle').value = faqItems[index].title;
+            document.getElementById('faqContent').value = faqItems[index].content;
+            document.getElementById('editingFaqIndex').value = index;
+            document.getElementById('faqModal').classList.add('active');
+        }
+
+        function saveFaq() {
+            const index = parseInt(document.getElementById('editingFaqIndex').value);
+            const title = document.getElementById('faqTitle').value.trim();
+            const content = document.getElementById('faqContent').value.trim();
+
+            if (!title || !content) {
+                showToast('⚠️ Completa todos los campos');
+                return;
+            }
+
+            if (index >= 0 && index < faqItems.length) {
+                faqItems[index] = { title, content };
+                showToast('✅ FAQ actualizada correctamente');
+            } else {
+                faqItems.push({ title, content });
+                showToast('✅ FAQ agregada correctamente');
+            }
+
+            closeFaqModal();
+            renderFAQ();
+        }
+
+        function closeFaqModal() {
+            document.getElementById('faqModal').classList.remove('active');
+        }
+
+        // ==========================================
+        // TOAST
+        // ==========================================
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+
+            clearTimeout(toast.timeout);
+            toast.timeout = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3500);
+        }
+
+        // ==========================================
+        // INICIALIZAR
+        // ==========================================
+        document.addEventListener('DOMContentLoaded', function() {
+            // 1. Cargar configuración de GitHub
+            loadGitHubConfig();
+            
+            // 2. Renderizar todo
+            renderProducts();
+            renderFAQ();
+            renderPaymentMethods();
+            renderAdminTable();
+            
+            // 3. Actualizar WhatsApp
+            document.getElementById('footerWhatsApp').textContent = '+' + WHATSAPP_NUMBER;
+            document.getElementById('whatsappNumber').value = WHATSAPP_NUMBER;
+            
+            showToast('⚡ PokéTienda cargada correctamente');
+            console.log('⚡ PokéTienda Online cargada');
+            console.log('📦 Productos disponibles:', products.length);
+            console.log('🔐 Contraseña admin:', ADMIN_PASSWORD);
+            console.log('📱 WhatsApp:', WHATSAPP_NUMBER);
+            console.log('🐙 GitHub configurado:', !!GITHUB_TOKEN);
+        });
+    </script>
+
+</body>
+</html>
